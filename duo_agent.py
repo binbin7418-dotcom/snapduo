@@ -37,14 +37,17 @@ TEMPLATES = {
             "photography, natural skin texture."
         ),
     },
-    "zombie-choice": {
+    "santa-market": {
         "aspect_ratio": "4:5",
         "prompt": (
-            "Create a cinematic zombie apocalypse couple portrait of the two people in the reference photos. "
-            "Keep both faces clearly recognizable and faithful to the reference photos. "
-            "The two stand back to back as survivors in torn, dirty clothes, determined expressions, "
-            "a ruined city street with fog behind them, dramatic teal-and-orange movie lighting, "
-            "photorealistic movie still, gritty realistic detail, natural skin texture."
+            "A candid smartphone photo of the two people in the reference photos at an outdoor Christmas "
+            "market at dusk. Keep both faces clearly recognizable and faithful to the reference photos. "
+            "Both wear bright red Santa hats and cozy winter coats with scarves, standing close together "
+            "and laughing naturally at the camera, each holding a paper cup of hot mulled wine. Warm string "
+            "lights and decorated wooden market stalls softly blurred behind them, light snow falling, "
+            "breath visible in the cold air. Flat natural dusk light, no cinematic color grading, no "
+            "dramatic lighting, natural skin texture with visible pores, slight photo grain, looks like a "
+            "real photo a friend took on a phone."
         ),
     },
     "tiny-boyfriend": {
