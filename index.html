@@ -155,6 +155,9 @@
     animation:twinkle 2.6s ease-in-out infinite alternate; }
   @keyframes twinkle{ from{ opacity:.55 } to{ opacity:1 } }
   #snow{ position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:90; }
+  .tip-row{ margin-top:22px; padding-top:18px; border-top:1px dashed #ddd2c0; display:flex; align-items:center;
+    gap:14px; flex-wrap:wrap; font-size:14.5px; color:var(--ink2); }
+  .tip-btn{ padding:9px 18px; font-size:14px; }
   .note-row{ margin-top:18px; max-width:640px; }
   .note-row label{ display:block; font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.05em;
     text-transform:uppercase; color:var(--ink2); margin-bottom:8px; }
@@ -285,6 +288,10 @@
           </div>
           <div class="status" id="unlockStatus"></div>
         </div>
+      </div>
+      <div class="tip-row">
+        <span>Love your photo? A tip is never required — it just keeps SnapDuo free to try. ☕</span>
+        <a class="btn ghost tip-btn" href="https://binbinster.gumroad.com/l/snapduo-tip" target="_blank" rel="noopener">Leave a tip</a>
       </div>
     </div>
   </div>
