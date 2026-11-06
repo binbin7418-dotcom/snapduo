@@ -146,8 +146,8 @@ def kie_generate(template_id, image_urls, note=""):
     prompt = tpl["prompt"]
     note = " ".join((note or "").split())[:140]
     if note:
-        prompt += ("\nAdditional detail the couple asked for (include it only if it "
-                   "fits the scene naturally; the template scene above stays in charge): " + note)
+        prompt += ("\nOne change the couple specifically asked for — you must include it, "
+                   "while keeping everything else in the scene above: " + note)
     payload = {
         "model": "nano-banana-2-1",
         "input": {
