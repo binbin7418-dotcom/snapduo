@@ -292,6 +292,10 @@ class Handler(BaseHTTPRequestHandler):
                not (b[:3] == b"\xff\xd8\xff" or b[:8] == b"\x89PNG\r\n\x1a\n"):
                 self.send_json(400, {"error": "photo_must_be_jpg_or_png"})
                 return
+            note = payload.get("note") or ""
+            if not isinstance(note, str):
+                note = ""
+            note = " ".join(note.split())[:140]
             cleanup_old_jobs()
             job_id = secrets.token_urlsafe(12)
             d = job_dir(job_id)
@@ -301,6 +305,7 @@ class Handler(BaseHTTPRequestHandler):
             with open(os.path.join(d, "input-b.jpg"), "wb") as f:
                 f.write(b)
             job = {"id": job_id, "template": template, "status": "queued",
+                   "note": note,
                    "created_at": time.time(), "unlocked": False,
                    "download_token": secrets.token_urlsafe(18)}
             write_job(job)
