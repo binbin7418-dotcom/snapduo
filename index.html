@@ -3,133 +3,280 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SnapDuo — Turn two photos into one trend photo</title>
-<meta name="description" content="Upload two photos, pick a trending style, and get one photo of you together. Free preview, no sign-up.">
+<title>SnapDuo — Two photos in. One photo of you two, together.</title>
+<meta name="description" content="Upload two separate photos, pick a trending style, and get one believable photo of the two of you together. Free preview in about a minute. No sign-up.">
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-  :root { --ink:#1c1a17; --muted:#6f6a61; --bg:#faf7f2; --card:#fff; --line:#e7e0d4; --accent:#c8402a; --accent2:#1f6f4a; }
-  * { box-sizing: border-box; }
-  body { margin:0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background:var(--bg); color:var(--ink); }
-  .wrap { max-width: 880px; margin: 0 auto; padding: 24px 18px 64px; }
-  header { text-align:center; padding: 28px 0 8px; }
-  h1 { font-size: 40px; margin: 0 0 8px; letter-spacing: -0.5px; }
-  h1 .duo { color: var(--accent); }
-  .sub { color: var(--muted); font-size: 17px; margin: 0 auto; max-width: 560px; line-height: 1.5; }
-  .sample { display:flex; gap:10px; align-items:center; justify-content:center; margin: 26px 0 6px; flex-wrap: wrap; }
-  .sample img { border-radius: 14px; object-fit: cover; box-shadow: 0 4px 18px rgba(0,0,0,.10); }
-  .sample .in { width: 118px; height: 148px; }
-  .sample .out { width: 236px; height: 295px; }
-  .sample .arrow { font-size: 26px; color: var(--muted); }
-  .sample-cap { text-align:center; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px; margin-top: 22px; }
-  .card h2 { margin: 0 0 14px; font-size: 20px; }
-  .templates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  @media (max-width: 640px) { .templates { grid-template-columns: 1fr; } h1 { font-size: 32px; } }
-  .tpl { border: 2px solid var(--line); border-radius: 14px; padding: 14px; cursor: pointer; }
-  .tpl.sel { border-color: var(--accent); background: #fdf3ef; }
-  .tpl .t { font-weight: 700; font-size: 16px; }
-  .tpl .d { color: var(--muted); font-size: 13px; margin-top: 4px; line-height: 1.45; }
-  .tpl .tag { display:inline-block; font-size: 11px; font-weight:700; color:#fff; background: var(--accent2); border-radius: 999px; padding: 2px 8px; margin-bottom: 8px; }
-  .tpl .tag.hot { background: var(--accent); }
-  .uploads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  @media (max-width: 640px) { .uploads { grid-template-columns: 1fr; } }
-  .up { border: 2px dashed var(--line); border-radius: 14px; padding: 16px; text-align: center; cursor: pointer; min-height: 150px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 8px; }
-  .up img { max-width: 100%; max-height: 190px; border-radius: 10px; }
-  .up .hint { color: var(--muted); font-size: 14px; }
-  .btn { display: inline-block; border: 0; border-radius: 999px; padding: 14px 30px; font-size: 17px; font-weight: 700; cursor: pointer; background: var(--accent); color: #fff; }
-  .btn:disabled { opacity: .45; cursor: not-allowed; }
-  .btn.green { background: var(--accent2); }
-  .btn.ghost { background: #efe9df; color: var(--ink); }
-  .center { text-align: center; }
-  .status { margin-top: 14px; color: var(--muted); font-size: 15px; min-height: 22px; }
-  .result img { max-width: 100%; border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
-  input[type=text] { width: 100%; padding: 13px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 16px; letter-spacing: 1px; }
-  .row { display:flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-  .row .btn { flex: 1; }
-  .fine { color: var(--muted); font-size: 13px; line-height: 1.55; }
-  footer { margin-top: 40px; color: var(--muted); font-size: 13px; line-height: 1.6; }
-  footer h3 { color: var(--ink); font-size: 15px; margin: 18px 0 6px; }
-  .hidden { display: none; }
+  :root{
+    --bg:#f6f1e8; --ink:#211a13; --ink60:rgba(33,26,19,.6); --ink40:rgba(33,26,19,.4);
+    --paper:#fffdf9; --line:rgba(33,26,19,.1); --accent:#b3372a; --accent-deep:#93301f;
+    --pine:#1f6f4a; --shadow:0 4px 14px rgba(33,26,19,.08), 0 18px 44px rgba(33,26,19,.08);
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  html,body{ background:var(--bg); }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:"Poppins",-apple-system,"Segoe UI",sans-serif; color:var(--ink);
+        -webkit-font-smoothing:antialiased; overflow-x:clip; }
+  ::selection{ background:rgba(179,55,42,.25); }
+  .grain{ position:fixed; inset:0; z-index:60; pointer-events:none; opacity:.05; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E"); }
+
+  /* ---------- nav ---------- */
+  nav{ position:relative; z-index:20; display:flex; justify-content:center; padding:18px 18px 0; }
+  .navpill{ display:flex; align-items:center; gap:14px; background:rgba(255,253,249,.82); backdrop-filter:blur(14px);
+    border:1px solid var(--line); border-radius:999px; padding:8px 10px 8px 20px; box-shadow:0 2px 10px rgba(33,26,19,.06);
+    animation:drop .8s var(--ease) both; }
+  .wordmark{ font-weight:600; font-size:19px; letter-spacing:-.03em; }
+  .wordmark em{ font-family:"Source Serif 4",serif; font-style:italic; font-weight:500; color:var(--accent); }
+  .navlinks{ display:flex; gap:4px; }
+  .navlinks a{ color:var(--ink60); text-decoration:none; font-size:13.5px; padding:7px 12px; border-radius:999px; transition:color .25s, background .25s; }
+  .navlinks a:hover{ color:var(--ink); background:rgba(33,26,19,.05); }
+  .navcta{ background:var(--ink); color:#fff; text-decoration:none; font-size:13.5px; font-weight:500;
+    padding:9px 18px; border-radius:999px; transition:transform .25s var(--ease), background .25s; }
+  .navcta:hover{ background:var(--accent); transform:scale(1.04); }
+  @media (max-width:640px){ .navlinks{ display:none; } .proof{ letter-spacing:.08em; line-height:1.9; } }
+  @keyframes drop{ from{ opacity:0; transform:translateY(-16px);} to{ opacity:1; transform:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{ max-width:1240px; margin:0 auto; padding:44px 32px 30px; display:grid; grid-template-columns:1.02fr .98fr; gap:48px; align-items:center; }
+  @media (max-width:900px){ .hero{ grid-template-columns:1fr; padding:30px 20px 10px; gap:30px; } }
+  .eyebrow{ display:inline-flex; align-items:center; gap:9px; font-family:"IBM Plex Mono",monospace; font-size:11.5px;
+    letter-spacing:.22em; text-transform:uppercase; color:var(--ink60); animation:fadeUp .8s var(--ease) .1s both; }
+  .eyebrow .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); }
+  h1{ font-size:clamp(44px,6.2vw,78px); line-height:.99; letter-spacing:-.032em; font-weight:500; margin:20px 0 0; }
+  h1 .line{ display:block; overflow:hidden; }
+  h1 .line > span{ display:block; animation:rise 1s var(--ease) both; }
+  h1 .line:nth-child(2) > span{ animation-delay:.12s; }
+  h1 .line:nth-child(3) > span{ animation-delay:.24s; }
+  h1 em{ font-family:"Source Serif 4",serif; font-style:italic; font-weight:500; color:var(--accent); letter-spacing:-.01em; }
+  @keyframes rise{ from{ transform:translateY(112%);} to{ transform:none;} }
+  .sub{ color:var(--ink60); font-size:17px; line-height:1.55; max-width:29rem; margin:22px 0 0; animation:fadeUp .9s var(--ease) .4s both; }
+  .ctas{ display:flex; gap:12px; margin-top:30px; flex-wrap:wrap; animation:fadeUp .9s var(--ease) .52s both; }
+  .btn{ display:inline-flex; align-items:center; gap:10px; border:0; cursor:pointer; text-decoration:none;
+    font-family:inherit; font-size:15.5px; font-weight:500; padding:15px 28px; border-radius:999px;
+    transition:transform .25s var(--ease), background .25s, box-shadow .25s; }
+  .btn .arr{ display:inline-flex; width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,.22);
+    align-items:center; justify-content:center; font-size:14px; transition:transform .25s var(--ease); }
+  .btn:hover{ transform:scale(1.035); } .btn:active{ transform:scale(.97); }
+  .btn:hover .arr{ transform:translateX(2px); }
+  .btn.solid{ background:var(--accent); color:#fff; box-shadow:0 10px 26px rgba(179,55,42,.28); }
+  .btn.solid:hover{ background:var(--accent-deep); }
+  .btn.ghost{ background:transparent; color:var(--ink); border:1px solid var(--line); }
+  .btn.ink{ background:var(--ink); color:#fff; }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+  .proof{ margin-top:30px; font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink40); animation:fadeUp .9s var(--ease) .64s both; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(22px);} to{ opacity:1; transform:none;} }
+
+  .stage{ position:relative; animation:fadeUp 1.1s var(--ease) .3s both; }
+  .stage .main{ width:100%; aspect-ratio:4/4.15; object-fit:cover; border-radius:30px; box-shadow:var(--shadow); display:block; }
+  .polaroid{ position:absolute; width:31%; background:#fff; padding:7px 7px 20px; border-radius:8px;
+    box-shadow:0 14px 34px rgba(33,26,19,.22); }
+  .polaroid img{ width:100%; aspect-ratio:4/4.4; object-fit:cover; display:block; border-radius:4px; }
+  .polaroid.a{ left:-26px; top:36px; transform:rotate(-7deg); }
+  .polaroid.b{ right:-20px; bottom:64px; transform:rotate(6deg); }
+  @media (max-width:900px){ .polaroid.a{ left:-6px; } .polaroid.b{ right:-4px; } }
+  .chip{ position:absolute; left:18px; bottom:18px; display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,253,249,.78); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,.6);
+    padding:9px 15px; border-radius:999px; font-size:12.5px; font-weight:500; box-shadow:0 6px 18px rgba(33,26,19,.14); }
+  .chip .dot{ width:7px; height:7px; border-radius:50%; background:var(--pine); }
+
+  /* ---------- sheet / tool ---------- */
+  .sheet{ background:var(--paper); border-radius:40px 40px 0 0; margin-top:34px; position:relative; z-index:5;
+    box-shadow:0 -18px 50px rgba(33,26,19,.07); }
+  .sheet-in{ max-width:1060px; margin:0 auto; padding:56px 28px 30px; }
+  .sec-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:22px; }
+  .sec-num{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:#fff; background:var(--ink);
+    width:27px; height:27px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex:none;
+    transform:translateY(4px); }
+  .sec-head h2{ font-size:clamp(24px,3.4vw,32px); font-weight:500; letter-spacing:-.025em; margin:0; }
+  .sec-head p{ color:var(--ink60); margin:0; font-size:14.5px; }
+  .templates{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media (max-width:820px){ .templates{ grid-template-columns:1fr; } }
+  .tpl{ border:1.5px solid var(--line); border-radius:24px; overflow:hidden; cursor:pointer; background:#fff;
+    transition:transform .3s var(--ease), border-color .3s, box-shadow .3s; }
+  .tpl:hover{ transform:translateY(-4px); box-shadow:var(--shadow); }
+  .tpl.sel{ border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), var(--shadow); }
+  .tpl img{ width:100%; aspect-ratio:4/3.1; object-fit:cover; display:block; }
+  .tpl .body{ padding:16px 18px 18px; }
+  .tpl .tag{ display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--pine); margin-bottom:7px; }
+  .tpl .tag.hot{ color:var(--accent); }
+  .tpl .t{ font-weight:600; font-size:17px; letter-spacing:-.01em; }
+  .tpl .d{ color:var(--ink60); font-size:13.5px; line-height:1.5; margin-top:5px; }
+  .uploads{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .uploads{ grid-template-columns:1fr; } }
+  .up{ border:1.5px dashed rgba(33,26,19,.22); border-radius:24px; padding:22px; text-align:center; cursor:pointer;
+    min-height:170px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    transition:border-color .25s, background .25s; background:#fff; }
+  .up:hover{ border-color:var(--accent); background:#fdf6ee; }
+  .up img{ max-width:100%; max-height:210px; border-radius:14px; }
+  .up .hint{ color:var(--ink60); font-size:14px; }
+  .up .hint b{ color:var(--ink); font-weight:600; }
+  .create-row{ text-align:center; margin-top:28px; }
+  .status{ margin-top:14px; color:var(--ink60); font-size:14.5px; min-height:22px; }
+  .result{ margin-top:44px; border-top:1px solid var(--line); padding-top:40px; }
+  .result img.preview{ max-width:min(520px,100%); border-radius:24px; box-shadow:var(--shadow); }
+  .unlock-grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; margin-top:20px; }
+  @media (max-width:820px){ .unlock-grid{ grid-template-columns:1fr; } }
+  input[type=text]{ width:100%; padding:14px 16px; border:1.5px solid var(--line); border-radius:14px;
+    font-size:15.5px; letter-spacing:.06em; font-family:inherit; background:#fff; }
+  input[type=text]:focus{ outline:none; border-color:var(--accent); }
+  .fine{ color:var(--ink60); font-size:13.5px; line-height:1.6; }
+  .hidden{ display:none !important; }
+  .row{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+  .row .btn{ flex:1; justify-content:center; }
+
+  footer{ background:var(--paper); }
+  .foot-in{ max-width:1060px; margin:0 auto; padding:10px 28px 64px; display:grid; grid-template-columns:repeat(4,1fr); gap:26px; }
+  @media (max-width:820px){ .foot-in{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:520px){ .foot-in{ grid-template-columns:1fr; } }
+  footer h3{ font-size:13px; font-family:"IBM Plex Mono",monospace; letter-spacing:.16em; text-transform:uppercase; margin:0 0 10px; }
+  footer p{ color:var(--ink60); font-size:13.5px; line-height:1.65; margin:0; }
+  .js .reveal{ opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+  .js .reveal.in{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{ animation:none !important; transition:none !important; }
+    .reveal{ opacity:1; transform:none; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Snap<span class="duo">Duo</span></h1>
-    <p class="sub">Two separate photos in — one photo of you together out. Pick a trending style, get a free preview in about a minute. No sign-up.</p>
-  </header>
+<div class="grain"></div>
 
-  <div class="sample">
-    <img class="in" src="/duo/assets/sample-a.jpg" alt="First uploaded photo">
-    <img class="in" src="/duo/assets/sample-b.jpg" alt="Second uploaded photo">
-    <div class="arrow">→</div>
-    <img class="out" src="/duo/assets/sample-result.jpg" alt="Generated Christmas couple photo">
+<nav>
+  <div class="navpill">
+    <div class="wordmark">Snap<em>Duo</em></div>
+    <div class="navlinks">
+      <a href="#styles">Styles</a><a href="#make">Make yours</a><a href="#how">How it works</a>
+    </div>
+    <a class="navcta" href="#make">Start free</a>
   </div>
-  <div class="sample-cap">A real example made by SnapDuo from two separate portraits.</div>
+</nav>
 
-  <div class="card">
-    <h2>1. Pick a style</h2>
-    <div class="templates" id="templates">
+<section class="hero">
+  <div>
+    <span class="eyebrow"><span class="dot"></span> The two-photo trend maker</span>
+    <h1>
+      <span class="line"><span>Two photos in.</span></span>
+      <span class="line"><span>One photo of</span></span>
+      <span class="line"><span>you two, <em>together.</em></span></span>
+    </h1>
+    <p class="sub">You each have a selfie. What you don't have is the photo together — the Christmas card, the movie poster, the meme. SnapDuo makes it from your two photos, in about a minute.</p>
+    <div class="ctas">
+      <a class="btn solid" href="#make">Make yours — free <span class="arr">→</span></a>
+      <a class="btn ghost" href="#styles">See the styles</a>
+    </div>
+    <div class="proof">≈60 seconds · No sign-up · Free preview · HD pack $9.99 / 3 photos</div>
+  </div>
+  <div class="stage">
+    <img class="main" src="/duo/assets/sample-result.jpg" alt="A couple's Christmas portrait generated by SnapDuo from two separate photos">
+    <div class="polaroid a"><img src="/duo/assets/sample-a.jpg" alt="First uploaded portrait"></div>
+    <div class="polaroid b"><img src="/duo/assets/sample-b.jpg" alt="Second uploaded portrait"></div>
+    <div class="chip"><span class="dot"></span> Made from these two photos</div>
+  </div>
+</section>
+
+<div class="sheet" id="styles">
+  <div class="sheet-in">
+    <div class="sec-head reveal">
+      <span class="sec-num">1</span>
+      <div><h2>Pick a style</h2><p>Every example below was made by SnapDuo from two separate portraits.</p></div>
+    </div>
+    <div class="templates reveal" id="templates">
       <div class="tpl sel" data-tpl="christmas-couple">
-        <span class="tag hot">TRENDING NOW</span>
-        <div class="t">🎄 Christmas Couple</div>
-        <div class="d">Matching reindeer sweaters, Christmas tree lights, mugs of cocoa. The holiday card photo you never got to take.</div>
+        <img src="/duo/assets/sample-result.jpg" alt="Christmas Couple example">
+        <div class="body">
+          <span class="tag hot">Trending now</span>
+          <div class="t">Christmas Couple</div>
+          <div class="d">Matching reindeer sweaters, tree lights, mugs of cocoa. The holiday card photo you never got to take.</div>
+        </div>
       </div>
       <div class="tpl" data-tpl="zombie-choice">
-        <span class="tag">VIRAL TREND</span>
-        <div class="t">🧟 Zombie Couple</div>
-        <div class="d">The two of you as apocalypse survivors, back to back, straight out of a movie still.</div>
+        <img src="/duo/assets/sample-zombie.jpg" alt="Zombie Couple example">
+        <div class="body">
+          <span class="tag">Viral trend</span>
+          <div class="t">Zombie Couple</div>
+          <div class="d">The two of you as apocalypse survivors, back to back, straight out of a movie still.</div>
+        </div>
       </div>
       <div class="tpl" data-tpl="tiny-boyfriend">
-        <span class="tag">NEW MEME</span>
-        <div class="t">🤏 Tiny Boyfriend</div>
-        <div class="d">She holds a miniature version of him in her palm. Silly, sweet, extremely shareable.</div>
+        <img src="/duo/assets/sample-tiny.jpg" alt="Tiny Boyfriend example">
+        <div class="body">
+          <span class="tag">New meme</span>
+          <div class="t">Tiny Boyfriend</div>
+          <div class="d">She holds a miniature version of him in her palm. Silly, sweet, extremely shareable.</div>
+        </div>
       </div>
     </div>
 
-    <h2 style="margin-top:26px;">2. Upload two photos</h2>
-    <div class="uploads">
+    <div class="sec-head reveal" id="make" style="margin-top:52px;">
+      <span class="sec-num">2</span>
+      <div><h2>Upload two photos</h2><p>One person per photo, face clearly visible. A selfie works best.</p></div>
+    </div>
+    <div class="uploads reveal">
       <label class="up" id="upA">
-        <span class="hint">📷 Photo 1 — one person, face clearly visible</span>
+        <span class="hint"><b>Photo 1</b> — the first person</span>
         <input type="file" id="fileA" accept="image/jpeg,image/png" hidden>
       </label>
       <label class="up" id="upB">
-        <span class="hint">📷 Photo 2 — the other person</span>
+        <span class="hint"><b>Photo 2</b> — the second person</span>
         <input type="file" id="fileB" accept="image/jpeg,image/png" hidden>
       </label>
     </div>
 
-    <div class="center" style="margin-top:20px;">
-      <button class="btn" id="goBtn" disabled>Create our photo — free preview</button>
+    <div class="create-row reveal">
+      <button class="btn solid" id="goBtn" disabled>Create our photo — free preview <span class="arr">→</span></button>
       <div class="status" id="status"></div>
     </div>
-  </div>
 
-  <div class="card result hidden" id="resultCard">
-    <h2>Your preview</h2>
-    <div class="center"><img id="previewImg" alt="Your generated photo preview"></div>
-    <p class="fine center">Preview is watermarked and downsized. Unlock the full-resolution version below — one unlock pack covers 3 photos.</p>
-    <div class="row">
-      <a class="btn green center" id="buyBtn" href="#" target="_blank" rel="noopener" style="text-decoration:none;">Get the HD Unlock Pack</a>
-    </div>
-    <div style="margin-top:16px;">
-      <input type="text" id="licenseKey" placeholder="Paste your license key (from the Gumroad receipt)">
-      <div class="row">
-        <button class="btn" id="unlockBtn">Unlock full resolution</button>
-        <a class="btn ghost center hidden" id="downloadBtn" href="#" style="text-decoration:none;">Download full photo</a>
+    <div class="result hidden" id="resultCard">
+      <div class="sec-head">
+        <span class="sec-num">3</span>
+        <div><h2>Your photo</h2><p>Preview first — pay only if you love it.</p></div>
       </div>
-      <div class="status" id="unlockStatus"></div>
+      <div style="text-align:center;"><img class="preview" id="previewImg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Your generated photo preview"></div>
+      <div class="unlock-grid">
+        <div>
+          <p class="fine">The preview is watermarked and downsized. The HD Unlock Pack removes the watermark and gives you the full-resolution file — one pack unlocks any 3 photos, in any style.</p>
+          <div class="row">
+            <a class="btn ink" id="buyBtn" href="#" target="_blank" rel="noopener" style="justify-content:center;">Get the HD Unlock Pack — $9.99</a>
+          </div>
+        </div>
+        <div>
+          <input type="text" id="licenseKey" placeholder="License key (from your Gumroad receipt)">
+          <div class="row">
+            <button class="btn solid" id="unlockBtn">Unlock full resolution</button>
+            <a class="btn ink hidden" id="downloadBtn" href="#" style="justify-content:center;">Download full photo</a>
+          </div>
+          <div class="status" id="unlockStatus"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <footer>
-    <h3>How it works</h3>
-    Upload two portraits, choose a style, and our AI builds one believable photo of the two of you together. The preview is free. The unlock pack removes the watermark and gives you the full-resolution file for any 3 photos.
-    <h3>Privacy</h3>
-    Your photos are used only to create your picture and are automatically deleted within 7 days. We never sell photos or use them to train anything.
-    <h3>Refunds</h3>
-    If generation fails on our side, you don't pay for it — previews are free. If an unlocked download doesn't match its preview, email us within 7 days and we'll regenerate it or refund you.
-    <h3>Contact</h3>
-    Support: binbin7418@gmail.com — we reply within one business day.
+  <footer id="how">
+    <div class="foot-in">
+      <div>
+        <h3>How it works</h3>
+        <p>Upload two portraits, choose a style, and our AI builds one believable photo of the two of you together. The preview is free. The unlock pack removes the watermark and gives you the full-resolution file for any 3 photos.</p>
+      </div>
+      <div>
+        <h3>Privacy</h3>
+        <p>Your photos are used only to create your picture and are automatically deleted within 7 days. We never sell photos or use them to train anything.</p>
+      </div>
+      <div>
+        <h3>Refunds</h3>
+        <p>If generation fails on our side, you don't pay for it — previews are free. If an unlocked download doesn't match its preview, email us within 7 days and we'll regenerate it or refund you.</p>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <p>Support: binbin7418@gmail.com<br>We reply within one business day.</p>
+      </div>
+    </div>
   </footer>
 </div>
 
@@ -238,6 +385,12 @@ document.getElementById("unlockBtn").addEventListener("click", async () => {
     st.textContent = "Network hiccup — please try again.";
   }
 });
+
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}), {threshold: 0.05, rootMargin: "500px 0px"});
+document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+setTimeout(() => document.querySelectorAll(".reveal").forEach(el => el.classList.add("in")), 3000);
 </script>
 </body>
 </html>
