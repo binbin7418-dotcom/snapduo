@@ -32,7 +32,7 @@ MAX_UNLOCKS_PER_KEY = 3
 DAILY_JOB_CAP_PER_IP = 20
 JOB_TTL_SECONDS = 7 * 24 * 3600
 MAX_PHOTO_BYTES = 10 * 1024 * 1024
-TEMPLATES = {"christmas-couple", "zombie-choice", "tiny-boyfriend"}
+TEMPLATES = {"christmas-couple", "santa-market", "tiny-boyfriend"}
 
 _lock = threading.Lock()
 
