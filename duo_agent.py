@@ -82,11 +82,45 @@ def http_json(method, url, payload=None, headers=None, timeout=60):
         return read_json_response(resp)
 
 
-def http_bytes(url, timeout=120):
-    req = urllib.request.Request(url, method="GET")
-    opener = urllib.request.build_opener(NoRedirect())
-    with opener.open(req, timeout=timeout) as resp:
-        return resp.read()
+def http_bytes(url, timeout=120, attempts=40):
+    # The egress path drops bursts mid-stream, so download with HTTP Range
+    # resume: keep every byte that arrived and continue where it stopped.
+    buf = bytearray()
+    total = None
+    last = None
+    for i in range(attempts):
+        try:
+            req = urllib.request.Request(url, method="GET")
+            if buf:
+                req.add_header("Range", "bytes=%d-" % len(buf))
+            opener = urllib.request.build_opener(NoRedirect())
+            with opener.open(req, timeout=timeout) as resp:
+                if buf and resp.status == 200:
+                    buf = bytearray()  # server ignored Range; start over
+                clen = resp.headers.get("Content-Length")
+                if resp.status == 206:
+                    crange = resp.headers.get("Content-Range", "")
+                    if "/" in crange:
+                        try:
+                            total = int(crange.rsplit("/", 1)[1])
+                        except ValueError:
+                            pass
+                elif clen is not None:
+                    total = int(clen)
+                while True:
+                    chunk = resp.read(65536)
+                    if not chunk:
+                        break
+                    buf.extend(chunk)
+            if total is not None and len(buf) >= total:
+                return bytes(buf[:total])
+            if total is None and buf:
+                return bytes(buf)
+            last = IOError("short read: %d of %s bytes" % (len(buf), total))
+        except Exception as e:
+            last = e
+        time.sleep(1.5)
+    raise last or IOError("download failed")
 
 
 def kie_call(method, path, payload=None):
@@ -107,12 +141,17 @@ def kie_call(method, path, payload=None):
         return e.code, body
 
 
-def kie_generate(template_id, image_urls):
+def kie_generate(template_id, image_urls, note=""):
     tpl = TEMPLATES[template_id]
+    prompt = tpl["prompt"]
+    note = " ".join((note or "").split())[:140]
+    if note:
+        prompt += ("\nAdditional detail the couple asked for (include it only if it "
+                   "fits the scene naturally; the template scene above stays in charge): " + note)
     payload = {
         "model": "nano-banana-2-1",
         "input": {
-            "prompt": tpl["prompt"],
+            "prompt": prompt,
             "image_input": image_urls,
             "aspect_ratio": tpl["aspect_ratio"],
             "resolution": "1K",
@@ -175,13 +214,22 @@ def process_job(cfg, job):
     token = cfg["agent_token"]
     headers = {"X-Agent-Token": token}
     try:
-        result_url = kie_generate(job["template"], [job["input_a_url"], job["input_b_url"]])
+        result_url = kie_generate(job["template"], [job["input_a_url"], job["input_b_url"]], job.get("note") or "")
         clean = http_bytes(result_url)
         preview = make_preview(clean)
-        http_json("POST", "%s/duo/agent/complete/%s" % (base, job["id"]), {
+        payload = {
             "clean_b64": base64.b64encode(clean).decode(),
             "preview_b64": base64.b64encode(preview).decode(),
-        }, headers=headers, timeout=180)
+        }
+        for attempt in range(3):
+            try:
+                http_json("POST", "%s/duo/agent/complete/%s" % (base, job["id"]),
+                          payload, headers=headers, timeout=180)
+                break
+            except Exception:
+                if attempt == 2:
+                    raise
+                time.sleep(3 * (attempt + 1))
         print("done job %s" % job["id"], flush=True)
     except Exception as e:
         print("job %s failed: %s" % (job["id"], e), flush=True)
