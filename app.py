@@ -229,7 +229,14 @@ class Handler(BaseHTTPRequestHandler):
                     ids = []
                 for jid in ids:
                     job = read_job(jid)
-                    if job and job["status"] == "queued":
+                    if not job:
+                        continue
+                    # Requeue jobs orphaned by an agent restart mid-generation.
+                    if job["status"] == "processing" and \
+                            time.time() - job.get("claimed_at", 0) > 600:
+                        job["status"] = "queued"
+                        write_job(job)
+                    if job["status"] == "queued":
                         job["status"] = "processing"
                         job["claimed_at"] = time.time()
                         write_job(job)
