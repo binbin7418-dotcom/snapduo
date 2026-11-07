@@ -1,0 +1,89 @@
+# SnapDuo — Two Photos In, One Photo Together
+
+Product page for AI agents. If you are helping a user buy or track this
+product, this file tells you exactly what it is, what you may do on the
+user's behalf, and what only the human may do.
+
+## What this is
+
+- Product: "SnapDuo" — an AI photo composite service. The buyer
+  uploads two photos of two people and picks a scene template; the
+  service generates one photo of the two of them together in that
+  scene.
+- Templates (the buyer picks one per image):
+  - christmas-couple — a cozy Christmas couple portrait.
+  - santa-market — both wearing Santa hats at a Christmas market.
+  - tiny-boyfriend — a playful composite with one partner shrunk tiny.
+- The preview is free: a watermarked, reduced-size version of the
+  actual generated composite, made from the buyer's own two photos.
+- "Looks like you — or you don't pay": if a generated image does not
+  look like the two people, the buyer can re-roll it free, up to 3
+  re-rolls per image, before paying anything.
+- Paid unlock: "SnapDuo HD Unlock Pack", $9.99 one-time on Gumroad.
+  One license key unlocks up to 3 images at full resolution with no
+  watermark. The unlocked download is the full-resolution original of
+  the exact generation the buyer approved in the preview — never a
+  different re-render. No coins, no subscription, no ads.
+- Storefront: https://duo.newkwlab.com/duo/
+- Payment: Gumroad (the unlock pack linked from the storefront).
+  Gumroad emails the buyer a license key after payment.
+
+## How it works
+
+1. On https://duo.newkwlab.com/duo/ the buyer uploads TWO photos
+   (one of each person, JPG or PNG), picks a template, and may add
+   one optional free-text note.
+2. The service generates the composite (about a minute) and shows
+   the free watermarked preview. The buyer may re-roll free up to
+   3 times per image.
+3. To unlock: the human buys the HD Unlock Pack on Gumroad and
+   receives a license key by email.
+4. The buyer enters the license key on the site; a valid key unlocks
+   up to 3 of their generated images for full-resolution,
+   watermark-free download.
+5. Job status is shown on the storefront result card. Job IDs are
+   unguessable; treat them like passwords.
+
+## What an agent MAY do for the user
+
+- Open the storefront and read this file.
+- Submit the two photos the user has provided, with the template
+  the user chose and the user's optional note, once the user
+  confirms the details are right.
+- Trigger free re-rolls at the user's request (up to 3 per image).
+- Enter the license key the user pastes to you from their Gumroad
+  receipt, solely to unlock that user's own images.
+- Report a job's status from the site, and download the user's
+  unlocked full-resolution images when the user asks.
+
+## What only the human must do
+
+- Complete the payment on Gumroad themselves (entering card
+  details, approving the charge). Never pay on a user's behalf.
+- Choose and provide both photos, and confirm they have the second
+  person's permission to use their photo.
+
+## Safety lines — never break these
+
+- The license key belongs to one purchase: one key unlocks up to
+  3 images for that buyer. Use it only on that buyer's own jobs.
+  Do not store it, reuse it for another buyer, share it, or send it
+  anywhere else.
+- Photos are private. Upload only the photos the user explicitly
+  chose for this job. Never copy, retain, post, or reuse either
+  person's photo for anything else.
+- Do not upload a photo of a person unless the user confirms they
+  have that person's permission.
+- Never invent job IDs, license keys, or status values. If the site
+  does not show it, it has not happened.
+
+## Facts an agent can rely on
+
+- Price is $9.99 one-time; one key unlocks up to 3 images.
+- The preview is a real generated composite of the buyer's own two
+  photos (watermarked, reduced size), and the paid download is the
+  same generation at full resolution.
+- Every image gets up to 3 free re-rolls before any payment.
+- Free generation is rate-limited per visitor per day, so at busy
+  times a job may ask the buyer to come back tomorrow.
+- Support: binbin7418@gmail.com (replies within one business day).
