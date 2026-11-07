@@ -30,6 +30,8 @@ CONFIG_PATH = os.path.join(BASE_DIR, "duo_config.json")
 LICENSES_PATH = os.path.join(DATA_DIR, "licenses.json")
 MAX_UNLOCKS_PER_KEY = 3
 DAILY_JOB_CAP_PER_IP = 20
+MAX_REROLLS_PER_JOB = 3
+DAILY_GEN_CAP_PER_IP = 20
 JOB_TTL_SECONDS = 7 * 24 * 3600
 MAX_PHOTO_BYTES = 10 * 1024 * 1024
 TEMPLATES = {"christmas-couple", "santa-market", "tiny-boyfriend"}
@@ -75,6 +77,28 @@ def save_licenses(data):
     with open(tmp, "w") as f:
         json.dump(data, f)
     os.replace(tmp, LICENSES_PATH)
+
+
+def load_json_file(path, default):
+    if not os.path.exists(path):
+        return default
+    with open(path) as f:
+        return json.load(f)
+
+
+def count_generation(ip):
+    """Charge one generation (initial job or reroll) against the caller's
+    daily generation budget. Returns True if the budget allowed it.
+    Must be called with _lock held."""
+    path = os.path.join(DATA_DIR, "gen_counts.json")
+    counts = load_json_file(path, {})
+    key = "%s:%s" % (time.strftime("%Y-%m-%d"), ip)
+    if counts.get(key, 0) >= DAILY_GEN_CAP_PER_IP:
+        return False
+    counts[key] = counts.get(key, 0) + 1
+    with open(path, "w") as f:
+        json.dump(counts, f)
+    return True
 
 
 def cleanup_old_jobs():
@@ -165,6 +189,9 @@ class Handler(BaseHTTPRequestHandler):
         if path in ("/duo", "/duo/", "/duo/index.html"):
             self.send_file(os.path.join(SITE_DIR, "index.html"), "text/html; charset=utf-8")
             return
+        if path == "/duo/llms.txt":
+            self.send_file(os.path.join(SITE_DIR, "llms.txt"), "text/plain; charset=utf-8")
+            return
         if path.startswith("/duo/assets/"):
             name = os.path.basename(path)
             ctype = "image/jpeg" if name.endswith((".jpg", ".jpeg")) else \
@@ -206,7 +233,8 @@ class Handler(BaseHTTPRequestHandler):
             if not job:
                 self.send_json(404, {"error": "not_found"})
                 return
-            out = {"id": job["id"], "status": job["status"], "template": job["template"]}
+            out = {"id": job["id"], "status": job["status"], "template": job["template"],
+                   "rerolls_left": max(0, MAX_REROLLS_PER_JOB - job.get("rerolls_used", 0))}
             if job["status"] == "done":
                 out["preview_url"] = "/duo/files/%s/preview.jpg" % job_id
                 out["unlocked"] = bool(job.get("unlocked"))
@@ -251,6 +279,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, {"job": {
                 "id": nxt["id"],
                 "template": nxt["template"],
+                "note": nxt.get("note", ""),
                 "input_a_url": "%s/duo/files/%s/input-a.jpg" % (base, nxt["id"]),
                 "input_b_url": "%s/duo/files/%s/input-b.jpg" % (base, nxt["id"]),
             }})
@@ -283,6 +312,9 @@ class Handler(BaseHTTPRequestHandler):
                 if counts.get(key, 0) >= DAILY_JOB_CAP_PER_IP:
                     self.send_json(429, {"error": "daily_cap"})
                     return
+                if not count_generation(ip):
+                    self.send_json(429, {"error": "daily_cap"})
+                    return
                 counts[key] = counts.get(key, 0) + 1
                 with open(counts_path, "w") as f:
                     json.dump(counts, f)
@@ -312,11 +344,42 @@ class Handler(BaseHTTPRequestHandler):
             with open(os.path.join(d, "input-b.jpg"), "wb") as f:
                 f.write(b)
             job = {"id": job_id, "template": template, "status": "queued",
-                   "note": note,
+                   "note": note, "rerolls_used": 0,
                    "created_at": time.time(), "unlocked": False,
                    "download_token": secrets.token_urlsafe(18)}
             write_job(job)
             self.send_json(200, {"id": job_id, "status": "queued"})
+            return
+
+        if path.startswith("/duo/api/jobs/") and path.endswith("/reroll"):
+            job_id = path.split("/")[4]
+            job = read_job(job_id)
+            if not job:
+                self.send_json(404, {"error": "job_not_found"})
+                return
+            if job.get("unlocked"):
+                self.send_json(400, {"error": "already_unlocked"})
+                return
+            if job["status"] not in ("done", "failed"):
+                self.send_json(400, {"error": "job_not_ready"})
+                return
+            ip = self.headers.get("X-Forwarded-For", self.client_address[0]).split(",")[0].strip()
+            with _lock:
+                job = read_job(job_id)
+                if job.get("rerolls_used", 0) >= MAX_REROLLS_PER_JOB:
+                    self.send_json(403, {"error": "rerolls_exhausted",
+                                         "rerolls_left": 0})
+                    return
+                if not count_generation(ip):
+                    self.send_json(429, {"error": "daily_cap"})
+                    return
+                job["rerolls_used"] = job.get("rerolls_used", 0) + 1
+                job["status"] = "queued"
+                job.pop("error", None)
+                job.pop("finished_at", None)
+                write_job(job)
+                left = MAX_REROLLS_PER_JOB - job["rerolls_used"]
+            self.send_json(200, {"id": job_id, "status": "queued", "rerolls_left": left})
             return
 
         if path.startswith("/duo/api/unlock"):
